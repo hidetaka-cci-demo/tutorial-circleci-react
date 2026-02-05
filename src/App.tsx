@@ -25,7 +25,7 @@ function App() {
               name="mode"
               value="counter"
               checked={mode === 'counter'}
-              onChange={(e) => setMode(e.target.value as 'counter' | 'fizzbuzz')}
+              onChange={(e) => setMode(e.target.value as 'counter' | 'fizzbuzz' | 'primeOrPerfect')}
             />
             カウンター
           </label>
@@ -35,9 +35,19 @@ function App() {
               name="mode"
               value="fizzbuzz"
               checked={mode === 'fizzbuzz'}
-              onChange={(e) => setMode(e.target.value as 'counter' | 'fizzbuzz')}
+              onChange={(e) => setMode(e.target.value as 'counter' | 'fizzbuzz' | 'primeOrPerfect')}
             />
             FizzBuzz
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="primeOrPerfect"
+              checked={mode === 'primeOrPerfect'}
+              onChange={(e) => setMode(e.target.value as 'counter' | 'fizzbuzz' | 'primeOrPerfect')}
+            />
+            素数・完全数
           </label>
         </div>
         <button onClick={increment}>

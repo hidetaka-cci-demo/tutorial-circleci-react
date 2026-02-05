@@ -146,5 +146,108 @@ describe('useFizzBuzz', () => {
       })
       expect(result.current.result).toBe('Fizz')
     })
+
+    it('primeOrPerfectモードでは2回クリックすると素数を返す', () => {
+      const { result } = renderHook(() => useFizzBuzz())
+      act(() => {
+        result.current.setMode('primeOrPerfect')
+        result.current.increment()
+        result.current.increment()
+      })
+      expect(result.current.mode).toBe('primeOrPerfect')
+      expect(result.current.result).toBe('素数')
+    })
+
+    it('primeOrPerfectモードでは3回クリックすると素数を返す', () => {
+      const { result } = renderHook(() => useFizzBuzz())
+      act(() => {
+        result.current.setMode('primeOrPerfect')
+        result.current.increment()
+        result.current.increment()
+        result.current.increment()
+      })
+      expect(result.current.result).toBe('素数')
+    })
+
+    it('primeOrPerfectモードでは5回クリックすると素数を返す', () => {
+      const { result } = renderHook(() => useFizzBuzz())
+      act(() => {
+        result.current.setMode('primeOrPerfect')
+        for (let i = 0; i < 5; i++) {
+          result.current.increment()
+        }
+      })
+      expect(result.current.result).toBe('素数')
+    })
+
+    it('primeOrPerfectモードでは6回クリックすると完全数を返す', () => {
+      const { result } = renderHook(() => useFizzBuzz())
+      act(() => {
+        result.current.setMode('primeOrPerfect')
+        for (let i = 0; i < 6; i++) {
+          result.current.increment()
+        }
+      })
+      expect(result.current.result).toBe('完全数')
+    })
+
+    it('primeOrPerfectモードでは4回クリックすると4を返す', () => {
+      const { result } = renderHook(() => useFizzBuzz())
+      act(() => {
+        result.current.setMode('primeOrPerfect')
+        for (let i = 0; i < 4; i++) {
+          result.current.increment()
+        }
+      })
+      expect(result.current.result).toBe('4')
+    })
+
+    it('primeOrPerfectモードからcounterモードに切り替えられる', () => {
+      const { result } = renderHook(() => useFizzBuzz())
+      act(() => {
+        result.current.setMode('primeOrPerfect')
+        result.current.increment()
+        result.current.increment()
+      })
+      expect(result.current.result).toBe('素数')
+      
+      act(() => {
+        result.current.setMode('counter')
+      })
+      expect(result.current.mode).toBe('counter')
+      expect(result.current.result).toBe('2')
+    })
+
+    it('counterモードからprimeOrPerfectモードに切り替えられる', () => {
+      const { result } = renderHook(() => useFizzBuzz())
+      act(() => {
+        result.current.setMode('counter')
+        result.current.increment()
+        result.current.increment()
+      })
+      expect(result.current.result).toBe('2')
+      
+      act(() => {
+        result.current.setMode('primeOrPerfect')
+      })
+      expect(result.current.mode).toBe('primeOrPerfect')
+      expect(result.current.result).toBe('素数')
+    })
+
+    it('fizzbuzzモードからprimeOrPerfectモードに切り替えられる', () => {
+      const { result } = renderHook(() => useFizzBuzz())
+      act(() => {
+        result.current.setMode('fizzbuzz')
+        result.current.increment()
+        result.current.increment()
+      })
+      expect(result.current.result).toBe('2')
+      
+      act(() => {
+        result.current.setMode('primeOrPerfect')
+      })
+      expect(result.current.mode).toBe('primeOrPerfect')
+      expect(result.current.result).toBe('素数')
+    })
   })
 })

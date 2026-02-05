@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { fizzBuzz } from '../libs/fizzBuzz'
+import { primeOrPerfect } from '../libs/primeOrPerfect'
 
-export type Mode = 'counter' | 'fizzbuzz'
+export type Mode = 'counter' | 'fizzbuzz' | 'primeOrPerfect'
 
 export function useFizzBuzz() {
   const [count, setCount] = useState(0)
@@ -11,7 +12,12 @@ export function useFizzBuzz() {
     setCount((prev) => prev + 1)
   }
 
-  const result = mode === 'counter' ? count.toString() : fizzBuzz(count)
+  const result =
+    mode === 'counter'
+      ? count.toString()
+      : mode === 'fizzbuzz'
+        ? fizzBuzz(count)
+        : primeOrPerfect(count)
 
   return {
     count,
