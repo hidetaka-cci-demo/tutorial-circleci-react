@@ -1,9 +1,15 @@
-import Resolver, { type ResolveTarget } from 'class-resolver'
+import Resolver,{ type ResolveTarget } from 'class-resolver'
 
-// ハンドラクラスの実装
-class FizzBuzzHandler implements ResolveTarget<[number], string, string> {
-  supports(type: string): boolean {
-    return type === 'fizzbuzz'
+// 数値ベースの判定を行うRuleインターフェース
+interface Rule extends ResolveTarget<[number], string, number> {
+  supports(n: number): boolean
+  handle(n: number): string
+}
+
+// Ruleクラスの実装
+class FizzBuzzRule implements Rule {
+  supports(n: number): boolean {
+    return n !== 0 && n % 15 === 0
   }
 
   handle(_n: number): string {
@@ -11,9 +17,9 @@ class FizzBuzzHandler implements ResolveTarget<[number], string, string> {
   }
 }
 
-class FizzHandler implements ResolveTarget<[number], string, string> {
-  supports(type: string): boolean {
-    return type === 'fizz'
+class FizzRule implements Rule {
+  supports(n: number): boolean {
+    return n !== 0 && n % 3 === 0 && n % 15 !== 0
   }
 
   handle(_n: number): string {
@@ -21,9 +27,9 @@ class FizzHandler implements ResolveTarget<[number], string, string> {
   }
 }
 
-class BuzzHandler implements ResolveTarget<[number], string, string> {
-  supports(type: string): boolean {
-    return type === 'buzz'
+class BuzzRule implements Rule {
+  supports(n: number): boolean {
+    return n !== 0 && n % 5 === 0 && n % 15 !== 0
   }
 
   handle(_n: number): string {
@@ -31,9 +37,9 @@ class BuzzHandler implements ResolveTarget<[number], string, string> {
   }
 }
 
-class NumberHandler implements ResolveTarget<[number], string, string> {
-  supports(type: string): boolean {
-    return type === 'number'
+class NumberRule implements Rule {
+  supports(n: number): boolean {
+    return n === 0 || (n % 3 !== 0 && n % 5 !== 0)
   }
 
   handle(n: number): string {
@@ -43,29 +49,20 @@ class NumberHandler implements ResolveTarget<[number], string, string> {
 
 // FizzBuzzクラスの実装
 class FizzBuzz {
-  private resolver: Resolver<ResolveTarget<[number], string, string>, string>
+  private rules: Resolver<Rule, number>
 
   constructor() {
-    this.resolver = new Resolver(
-      new FizzBuzzHandler(),
-      new FizzHandler(),
-      new BuzzHandler(),
-      new NumberHandler()
+    this.rules = new Resolver<Rule, number>(
+      new FizzBuzzRule(),
+      new FizzRule(),
+      new BuzzRule(),
+      new NumberRule()
     )
   }
 
   execute(n: number): string {
-    const type = this.determineType(n)
-    const handler = this.resolver.resolve(type)
-    return handler.handle(n)
-  }
-
-  private determineType(n: number): string {
-    if (n === 0) return 'number'
-    if (n % 15 === 0) return 'fizzbuzz'
-    if (n % 3 === 0) return 'fizz'
-    if (n % 5 === 0) return 'buzz'
-    return 'number'
+    const rule = this.rules.resolve(n)
+    return rule.handle(n)
   }
 }
 
