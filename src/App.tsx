@@ -2,6 +2,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { useFizzBuzz } from './hooks/useFizzBuzz'
+import { TimeGreeting } from './components/TimeGreeting'
 
 function App() {
   const { result, increment, mode, setMode, incrementType, setIncrementType } = useFizzBuzz()
@@ -16,6 +17,7 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
+      <TimeGreeting />
       <h1>Vite + React</h1>
       <div className="card">
         <div className="mode-selector">
