@@ -31,10 +31,17 @@ class IncrementResolver {
     
     // フィボナッチ数列の場合は、previousとprevious2も返す
     if (type === 'fibonacci') {
+      // 連続呼び出しの場合: previousが定義されている場合はnextを返す（次回のpreviousとして使う）
+      // 他のtypeから切り替わる場合: previousがundefinedの場合はデフォルト値1を返す
+      const returnedPrevious = previous !== undefined ? next : 1
+      // 連続呼び出しの場合: previousが定義されている場合はpreviousを返す（次回のprevious2として使う）
+      // 他のtypeから切り替わる場合: previousがundefinedの場合はデフォルト値0を返す
+      const returnedPrevious2 = previous !== undefined ? previous : 0
+      
       return {
         next,
-        previous: current,
-        previous2: previous
+        previous: returnedPrevious,
+        previous2: returnedPrevious2
       }
     }
     
