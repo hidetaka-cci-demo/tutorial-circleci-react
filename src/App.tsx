@@ -1,18 +1,10 @@
-import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-
-function fizzBuzz(n: number): string {
-  if (n === 0) return '0'
-  if (n % 15 === 0) return 'FizzBuzz'
-  if (n % 3 === 0) return 'Fizz'
-  if (n % 5 === 0) return 'Buzz'
-  return n.toString()
-}
+import { useFizzBuzz } from './hooks/useFizzBuzz'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { result, increment } = useFizzBuzz()
 
   return (
     <>
@@ -26,8 +18,8 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          {fizzBuzz(count)}
+        <button onClick={increment}>
+          {result}
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
