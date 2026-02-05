@@ -15,6 +15,7 @@
     "test:integration": "vitest --include \"**/*.integration.test.{ts,tsx}\""
   },
   "dependencies": {
+    "class-resolver": "^4.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
