@@ -3,7 +3,6 @@ import type { Rule } from './rules/rule'
 import { FizzBuzzRule } from './rules/FizzBuzzRule'
 import { FizzRule } from './rules/FizzRule'
 import { BuzzRule } from './rules/BuzzRule'
-import { NumberRule } from './rules/NumberRule'
 
 // FizzBuzzクラスの実装
 class FizzBuzz {
@@ -13,9 +12,11 @@ class FizzBuzz {
     this.rules = new Resolver<Rule, number>(
       new FizzBuzzRule(),
       new FizzRule(),
-      new BuzzRule(),
-      new NumberRule()
+      new BuzzRule()
     )
+    this.rules.setFallbackHandler((n: number): string => {
+      return n.toString()
+    })
   }
 
   execute(n: number): string {
