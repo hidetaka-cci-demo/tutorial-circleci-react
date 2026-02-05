@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:unit": "vitest --include \"**/*.unit.test.{ts,tsx}\"",
+    "test:integration": "vitest --include \"**/*.integration.test.{ts,tsx}\""
   },
   "dependencies": {
     "react": "^19.2.0",
