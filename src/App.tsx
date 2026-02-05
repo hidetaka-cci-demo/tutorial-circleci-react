@@ -4,7 +4,7 @@ import './App.css'
 import { useFizzBuzz } from './hooks/useFizzBuzz'
 
 function App() {
-  const { result, increment, mode, setMode } = useFizzBuzz()
+  const { result, increment, mode, setMode, incrementType, setIncrementType } = useFizzBuzz()
 
   return (
     <>
@@ -48,6 +48,48 @@ function App() {
               onChange={(e) => setMode(e.target.value as 'counter' | 'fizzbuzz' | 'primeOrPerfect')}
             />
             素数・完全数
+          </label>
+        </div>
+        <div className="mode-selector">
+          <label>
+            <input
+              type="radio"
+              name="incrementType"
+              value="add"
+              checked={incrementType === 'add'}
+              onChange={(e) => setIncrementType(e.target.value as 'add' | 'subtract' | 'fibonacci' | 'multiply')}
+            />
+            +1
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="incrementType"
+              value="subtract"
+              checked={incrementType === 'subtract'}
+              onChange={(e) => setIncrementType(e.target.value as 'add' | 'subtract' | 'fibonacci' | 'multiply')}
+            />
+            -1
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="incrementType"
+              value="fibonacci"
+              checked={incrementType === 'fibonacci'}
+              onChange={(e) => setIncrementType(e.target.value as 'add' | 'subtract' | 'fibonacci' | 'multiply')}
+            />
+            フィボナッチ
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="incrementType"
+              value="multiply"
+              checked={incrementType === 'multiply'}
+              onChange={(e) => setIncrementType(e.target.value as 'add' | 'subtract' | 'fibonacci' | 'multiply')}
+            />
+            乗数
           </label>
         </div>
         <button onClick={increment}>
