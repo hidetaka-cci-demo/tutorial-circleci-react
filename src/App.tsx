@@ -3,6 +3,14 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+function fizzBuzz(n: number): string {
+  if (n === 0) return '0'
+  if (n % 15 === 0) return 'FizzBuzz'
+  if (n % 3 === 0) return 'Fizz'
+  if (n % 5 === 0) return 'Buzz'
+  return n.toString()
+}
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -19,7 +27,7 @@ function App() {
       <h1>Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+          {fizzBuzz(count)}
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
