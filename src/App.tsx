@@ -4,7 +4,7 @@ import './App.css'
 import { useFizzBuzz } from './hooks/useFizzBuzz'
 
 function App() {
-  const { result, increment } = useFizzBuzz()
+  const { result, increment, mode, setMode } = useFizzBuzz()
 
   return (
     <>
@@ -18,6 +18,28 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
+        <div className="mode-selector">
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="counter"
+              checked={mode === 'counter'}
+              onChange={(e) => setMode(e.target.value as 'counter' | 'fizzbuzz')}
+            />
+            カウンター
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="fizzbuzz"
+              checked={mode === 'fizzbuzz'}
+              onChange={(e) => setMode(e.target.value as 'counter' | 'fizzbuzz')}
+            />
+            FizzBuzz
+          </label>
+        </div>
         <button onClick={increment}>
           {result}
         </button>

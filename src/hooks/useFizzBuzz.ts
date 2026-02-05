@@ -1,16 +1,23 @@
 import { useState } from 'react'
 import { fizzBuzz } from '../libs/fizzBuzz'
 
+export type Mode = 'counter' | 'fizzbuzz'
+
 export function useFizzBuzz() {
   const [count, setCount] = useState(0)
+  const [mode, setMode] = useState<Mode>('fizzbuzz')
 
   const increment = () => {
     setCount((prev) => prev + 1)
   }
 
+  const result = mode === 'counter' ? count.toString() : fizzBuzz(count)
+
   return {
     count,
-    result: fizzBuzz(count),
+    result,
     increment,
+    mode,
+    setMode,
   }
 }
