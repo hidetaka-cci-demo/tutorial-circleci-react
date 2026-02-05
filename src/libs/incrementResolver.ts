@@ -1,5 +1,5 @@
 import Resolver from 'class-resolver'
-import type { IncrementHandler, IncrementContext } from './increments/incrementHandler'
+import type { IncrementHandler, IncrementContext, IncrementResult } from './increments/incrementHandler'
 import type { IncrementType } from '../hooks/useFizzBuzz'
 import { AddIncrement } from './increments/AddIncrement'
 import { SubtractIncrement } from './increments/SubtractIncrement'
@@ -24,10 +24,21 @@ class IncrementResolver {
     current: number,
     previous?: number,
     previous2?: number
-  ): number {
+  ): IncrementResult {
     const context: IncrementContext = { type, current, previous, previous2 }
     const handler = this.handlers.resolve(context)
-    return handler.handle(context)
+    const next = handler.handle(context)
+    
+    // フィボナッチ数列の場合は、previousとprevious2も返す
+    if (type === 'fibonacci') {
+      return {
+        next,
+        previous: current,
+        previous2: previous
+      }
+    }
+    
+    return { next }
   }
 }
 
@@ -39,6 +50,6 @@ export function resolveIncrement(
   current: number,
   previous?: number,
   previous2?: number
-): number {
+): IncrementResult {
   return incrementResolverInstance.execute(type, current, previous, previous2)
 }

@@ -14,15 +14,16 @@ export function useFizzBuzz() {
 
   const increment = () => {
     setCount((prev) => {
-      const next = resolveIncrement(incrementType, prev, previous, previous2)
+      const result = resolveIncrement(incrementType, prev, previous, previous2)
       
-      // フィボナッチ数列の場合は、前の2つの値を更新
-      if (incrementType === 'fibonacci') {
-        setPrevious2(previous)
-        setPrevious(next)
+      if (result.previous !== undefined) {
+        setPrevious(result.previous)
+      }
+      if (result.previous2 !== undefined) {
+        setPrevious2(result.previous2)
       }
       
-      return next
+      return result.next
     })
   }
 
