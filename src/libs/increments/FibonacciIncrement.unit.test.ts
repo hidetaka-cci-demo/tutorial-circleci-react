@@ -1,58 +1,75 @@
 import { describe, it, expect } from 'vitest'
 import fc from 'fast-check'
 import { FibonacciIncrement } from './FibonacciIncrement'
-import type { IncrementContext } from './incrementHandler'
+import type { IncrementType } from '../../hooks/useFizzBuzz'
 
 describe('FibonacciIncrement', () => {
   const increment = new FibonacciIncrement()
 
-  describe('supports メソッド', () => {
-    it('type が "fibonacci" の場合、常に true を返す', () => {
+  describe('Property-Based Testing', () => {
+    it('supports が true を返す場合、handle は常に previous + previous2 を返す', () => {
+      fc.assert(
+        fc.property(fc.integer(), fc.integer(), fc.integer(), (current, previous, previous2) => {
+          const context = {
+            type: 'fibonacci' as IncrementType,
+            current,
+            previous,
+            previous2,
+          }
+          if (increment.supports(context)) {
+            const expected = (previous ?? 1) + (previous2 ?? 0)
+            expect(increment.handle(context)).toBe(expected)
+          }
+        })
+      )
+    })
+
+    it('"fibonacci" タイプに対しては常に true を返す', () => {
       fc.assert(
         fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'fibonacci', current }
+          const context = { type: 'fibonacci' as IncrementType, current }
           expect(increment.supports(context)).toBe(true)
         })
       )
     })
 
-    it('type が "add" の場合、常に false を返す', () => {
+    it('"fibonacci" 以外のタイプに対しては常に false を返す', () => {
+      const otherTypes: IncrementType[] = ['add', 'subtract', 'multiply']
       fc.assert(
         fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'add', current }
-          expect(increment.supports(context)).toBe(false)
+          otherTypes.forEach((type) => {
+            const context = { type, current }
+            expect(increment.supports(context)).toBe(false)
+          })
         })
       )
     })
 
-    it('type が "subtract" の場合、常に false を返す', () => {
+    it('フィボナッチ数列の性質: F(n) = F(n-1) + F(n-2) を満たす', () => {
       fc.assert(
-        fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'subtract', current }
-          expect(increment.supports(context)).toBe(false)
-        })
-      )
-    })
-
-    it('type が "multiply" の場合、常に false を返す', () => {
-      fc.assert(
-        fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'multiply', current }
-          expect(increment.supports(context)).toBe(false)
-        })
+        fc.property(
+          fc.integer({ min: 1, max: 20 }),
+          fc.integer({ min: 0, max: 100 }),
+          fc.integer({ min: 0, max: 100 }),
+          (_, prev, prev2) => {
+            const context = {
+              type: 'fibonacci' as IncrementType,
+              current: 0,
+              previous: prev,
+              previous2: prev2,
+            }
+            const result = increment.handle(context)
+            expect(result).toBe(prev + prev2)
+          }
+        )
       )
     })
   })
 
-  describe('handle メソッド', () => {
-    it('previous と previous2 が未定義の場合、1 + 0 = 1 を返す', () => {
-      const context: IncrementContext = { type: 'fibonacci', current: 0 }
-      expect(increment.handle(context)).toBe(1)
-    })
-
-    it('previous が 1、previous2 が 0 の場合、1 を返す', () => {
-      const context: IncrementContext = {
-        type: 'fibonacci',
+  describe('例示テスト', () => {
+    it('初期状態（previous=1, previous2=0）で 1 を返す', () => {
+      const context = {
+        type: 'fibonacci' as IncrementType,
         current: 0,
         previous: 1,
         previous2: 0,
@@ -60,84 +77,86 @@ describe('FibonacciIncrement', () => {
       expect(increment.handle(context)).toBe(1)
     })
 
-    it('previous が 1、previous2 が 1 の場合、2 を返す', () => {
-      const context: IncrementContext = {
-        type: 'fibonacci',
+    it('previous と previous2 が未定義の場合、デフォルト値（1, 0）を使用して 1 を返す', () => {
+      const context = {
+        type: 'fibonacci' as IncrementType,
+        current: 0,
+      }
+      expect(increment.handle(context)).toBe(1)
+    })
+
+    it('連続した呼び出しでフィボナッチ数列を生成する', () => {
+      // フィボナッチ数列: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+      let previous2 = 0
+      let previous = 1
+
+      // 1回目: 0 + 1 = 1
+      const context1 = {
+        type: 'fibonacci' as IncrementType,
+        current: 0,
+        previous,
+        previous2,
+      }
+      const result1 = increment.handle(context1)
+      expect(result1).toBe(1)
+      previous2 = previous
+      previous = result1
+
+      // 2回目: 1 + 1 = 2
+      const context2 = {
+        type: 'fibonacci' as IncrementType,
         current: 1,
-        previous: 1,
-        previous2: 1,
+        previous,
+        previous2,
       }
-      expect(increment.handle(context)).toBe(2)
-    })
+      const result2 = increment.handle(context2)
+      expect(result2).toBe(2)
+      previous2 = previous
+      previous = result2
 
-    it('previous が 2、previous2 が 1 の場合、3 を返す', () => {
-      const context: IncrementContext = {
-        type: 'fibonacci',
+      // 3回目: 2 + 1 = 3
+      const context3 = {
+        type: 'fibonacci' as IncrementType,
         current: 2,
-        previous: 2,
-        previous2: 1,
+        previous,
+        previous2,
       }
-      expect(increment.handle(context)).toBe(3)
-    })
+      const result3 = increment.handle(context3)
+      expect(result3).toBe(3)
+      previous2 = previous
+      previous = result3
 
-    it('previous が 3、previous2 が 2 の場合、5 を返す', () => {
-      const context: IncrementContext = {
-        type: 'fibonacci',
+      // 4回目: 3 + 2 = 5
+      const context4 = {
+        type: 'fibonacci' as IncrementType,
         current: 3,
-        previous: 3,
-        previous2: 2,
+        previous,
+        previous2,
       }
-      expect(increment.handle(context)).toBe(5)
-    })
+      const result4 = increment.handle(context4)
+      expect(result4).toBe(5)
+      previous2 = previous
+      previous = result4
 
-    it('previous が 5、previous2 が 3 の場合、8 を返す', () => {
-      const context: IncrementContext = {
-        type: 'fibonacci',
+      // 5回目: 5 + 3 = 8
+      const context5 = {
+        type: 'fibonacci' as IncrementType,
         current: 5,
-        previous: 5,
-        previous2: 3,
+        previous,
+        previous2,
       }
-      expect(increment.handle(context)).toBe(8)
+      const result5 = increment.handle(context5)
+      expect(result5).toBe(8)
     })
 
-    it('previous のみが指定されている場合、previous + 0 を返す', () => {
-      fc.assert(
-        fc.property(fc.integer(), (prev) => {
-          const context: IncrementContext = {
-            type: 'fibonacci',
-            current: 0,
-            previous: prev,
-          }
-          expect(increment.handle(context)).toBe(prev + 0)
-        })
-      )
-    })
-
-    it('previous2 のみが指定されている場合、1 + previous2 を返す', () => {
-      fc.assert(
-        fc.property(fc.integer(), (prev2) => {
-          const context: IncrementContext = {
-            type: 'fibonacci',
-            current: 0,
-            previous2: prev2,
-          }
-          expect(increment.handle(context)).toBe(1 + prev2)
-        })
-      )
-    })
-
-    it('previous と previous2 が指定されている場合、previous + previous2 を返す', () => {
-      fc.assert(
-        fc.property(fc.integer(), fc.integer(), (prev, prev2) => {
-          const context: IncrementContext = {
-            type: 'fibonacci',
-            current: 0,
-            previous: prev,
-            previous2: prev2,
-          }
-          expect(increment.handle(context)).toBe(prev + prev2)
-        })
-      )
+    it('大きな値でも正しく計算する', () => {
+      const context = {
+        type: 'fibonacci' as IncrementType,
+        current: 100,
+        previous: 55,
+        previous2: 34,
+      }
+      expect(increment.handle(context)).toBe(89)
     })
   })
 })

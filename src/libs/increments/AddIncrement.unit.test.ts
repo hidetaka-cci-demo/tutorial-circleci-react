@@ -1,82 +1,78 @@
 import { describe, it, expect } from 'vitest'
 import fc from 'fast-check'
 import { AddIncrement } from './AddIncrement'
-import type { IncrementContext } from './incrementHandler'
+import type { IncrementType } from '../../hooks/useFizzBuzz'
 
 describe('AddIncrement', () => {
   const increment = new AddIncrement()
 
-  describe('supports メソッド', () => {
-    it('type が "add" の場合、常に true を返す', () => {
+  describe('Property-Based Testing', () => {
+    it('supports が true を返す場合、handle は常に current + 1 を返す', () => {
       fc.assert(
         fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'add', current }
+          const context = { type: 'add' as IncrementType, current }
+          if (increment.supports(context)) {
+            expect(increment.handle(context)).toBe(current + 1)
+          }
+        })
+      )
+    })
+
+    it('"add" タイプに対しては常に true を返す', () => {
+      fc.assert(
+        fc.property(fc.integer(), (current) => {
+          const context = { type: 'add' as IncrementType, current }
           expect(increment.supports(context)).toBe(true)
         })
       )
     })
 
-    it('type が "subtract" の場合、常に false を返す', () => {
+    it('"add" 以外のタイプに対しては常に false を返す', () => {
+      const otherTypes: IncrementType[] = ['subtract', 'fibonacci', 'multiply']
       fc.assert(
         fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'subtract', current }
-          expect(increment.supports(context)).toBe(false)
+          otherTypes.forEach((type) => {
+            const context = { type, current }
+            expect(increment.supports(context)).toBe(false)
+          })
         })
       )
     })
 
-    it('type が "multiply" の場合、常に false を返す', () => {
+    it('任意の数 n に対して n + 1 を返す', () => {
       fc.assert(
-        fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'multiply', current }
-          expect(increment.supports(context)).toBe(false)
-        })
-      )
-    })
-
-    it('type が "fibonacci" の場合、常に false を返す', () => {
-      fc.assert(
-        fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'fibonacci', current }
-          expect(increment.supports(context)).toBe(false)
+        fc.property(fc.integer(), (n) => {
+          const context = { type: 'add' as IncrementType, current: n }
+          expect(increment.handle(context)).toBe(n + 1)
         })
       )
     })
   })
 
-  describe('handle メソッド', () => {
-    it('current + 1 を返す', () => {
-      fc.assert(
-        fc.property(fc.integer(), (current) => {
-          const context: IncrementContext = { type: 'add', current }
-          expect(increment.handle(context)).toBe(current + 1)
-        })
-      )
-    })
-
-    it('current 0 を渡すと 1 を返す', () => {
-      const context: IncrementContext = { type: 'add', current: 0 }
+  describe('例示テスト', () => {
+    it('0 に対して 1 を返す', () => {
+      const context = { type: 'add' as IncrementType, current: 0 }
       expect(increment.handle(context)).toBe(1)
     })
 
-    it('current 1 を渡すと 2 を返す', () => {
-      const context: IncrementContext = { type: 'add', current: 1 }
+    it('1 に対して 2 を返す', () => {
+      const context = { type: 'add' as IncrementType, current: 1 }
       expect(increment.handle(context)).toBe(2)
     })
 
-    it('current 5 を渡すと 6 を返す', () => {
-      const context: IncrementContext = { type: 'add', current: 5 }
-      expect(increment.handle(context)).toBe(6)
-    })
-
-    it('current -1 を渡すと 0 を返す', () => {
-      const context: IncrementContext = { type: 'add', current: -1 }
+    it('負の数 -1 に対して 0 を返す', () => {
+      const context = { type: 'add' as IncrementType, current: -1 }
       expect(increment.handle(context)).toBe(0)
     })
 
-    it('current 100 を渡すと 101 を返す', () => {
-      const context: IncrementContext = { type: 'add', current: 100 }
-      expect(increment.handle(context)).toBe(101)
+    it('負の数 -10 に対して -9 を返す', () => {
+      const context = { type: 'add' as IncrementType, current: -10 }
+      expect(increment.handle(context)).toBe(-9)
+    })
+
+    it('大きな数 1000 に対して 1001 を返す', () => {
+      const context = { type: 'add' as IncrementType, current: 1000 }
+      expect(increment.handle(context)).toBe(1001)
     })
   })
 })

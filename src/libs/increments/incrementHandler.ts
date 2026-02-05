@@ -8,6 +8,12 @@ export type IncrementContext = {
   previous2?: number
 }
 
+export type IncrementResult = {
+  next: number
+  previous?: number
+  previous2?: number
+}
+
 // インクリメントタイプベースの処理を行うIncrementHandlerインターフェース
 export interface IncrementHandler extends ResolveTarget<[IncrementContext], number, IncrementContext> {
   supports(context: IncrementContext): boolean
