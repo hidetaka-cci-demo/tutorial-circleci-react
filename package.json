@@ -12,7 +12,11 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:unit": "vitest --include \"**/*.unit.test.{ts,tsx}\"",
-    "test:integration": "vitest --include \"**/*.integration.test.{ts,tsx}\""
+    "test:integration": "vitest --include \"**/*.integration.test.{ts,tsx}\"",
+    "test:unit:ci": "vitest run unit --reporter=junit --outputFile=test-results/unit.xml",
+    "test:integration:ci": "vitest run integration --reporter=junit --outputFile=test-results/integration.xml",
+    "test:coverage": "vitest run --coverage",
+    "ci:verify": "npm run lint && npm run test:run && npm run build"
   },
   "dependencies": {
     "class-resolver": "^4.0.1",
@@ -29,6 +33,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/coverage-v8": "^4.0.18",
     "@vitest/ui": "^4.0.18",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
